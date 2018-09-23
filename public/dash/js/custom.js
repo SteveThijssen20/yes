@@ -10,14 +10,7 @@ $("#submit").click(function(){
 	var email = $('#email').val();
 	var gender = $('#gender').val();
 	var phone = $('#phone').val();
-	// // alert(username);
-    // $.post("http://localhost:3000/api/cms/data",
-    // {
-    //     username: username
-    // },
-    // function(data, status){
-    //     console.log("asdf");
-	// });
+
 	$('#submit').prop('disabled', true);
 	$.ajax({
 		type: "POST",
@@ -40,6 +33,36 @@ $("#submit").click(function(){
 			alert(errMsg);
 		}
 	});
+
+	$('#submit').prop('disabled', true);
+	$.ajax({
+		type: "POST",
+		url: "http://localhost:3000/api/cms/data_input_eos",
+		// The key needs to match your method's input parameter (case-sensitive).
+		data: { 
+			"username": username,
+			"firstname": firstname,
+			"lastname": lastname,
+			"email": email,
+			"gender": gender,
+			"phone": phone
+		},
+		dataType: "JSON",
+		success: function(data){
+			$('#submit').prop('disabled', false);
+			var transaction = data.transaction;
+			$('#transaction_expiration').html("expiration : ").append(JSON.stringify(transaction.transaction.expiration));
+			$('#transaction_ref_block_num').html("ref_block_num : ").append(JSON.stringify(transaction.transaction.ref_block_num));
+			$('#transaction_ref_block_prefix').html("ref_block_prefix : ").append(JSON.stringify(transaction.transaction.ref_block_prefix));
+			$('#transaction_data').html("data : ").append(JSON.stringify(transaction.transaction.actions[0].data));
+			$('#transaction_signatures').html("signatures : ").append(JSON.stringify(transaction.signatures));
+			console.log(transaction);
+		},
+		failure: function(errMsg) {
+			alert(errMsg);
+		}
+	});
+
 	return false;
 });
 

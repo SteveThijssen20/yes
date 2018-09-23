@@ -40,7 +40,7 @@ function handleDisconnect() {
 
 const config = {
     chainId: null, // 32 byte (64 char) hex string
-    keyProvider: ['5J19wz7UPcQHePjbb4JwHHSjhWMbHgu7qncPTJQJcMvCg3nRUek'], // WIF string or array of keys..
+    keyProvider: ['5KetogvWDF4gMW17BPGvr6aeeY7XDGdXpzg18HWbmzXpjpq8MrL'], // WIF string or array of keys..
     httpEndpoint: 'http://127.0.0.1:8888',
     expireInSeconds: 1000,
     broadcast: true,
@@ -61,8 +61,8 @@ router.post('/data_input_eos', (req, res, next) => {
     const email = req.body.email;
     const gender = req.body.gender;
     const phone = req.body.phone;
-    eos.contract('scm').then(myaccount => {
-        const options = { authorization: [ `scm` ] };
+    eos.contract('sc').then(myaccount => {
+        const options = { authorization: [ `sc` ] };
         myaccount.create({username, firstname, lastname, email, gender, phone}, options).then(result => res.json(result));
         // console.log(myaccount);
         // console.log(myaccount.fc.structs.user);
@@ -70,7 +70,7 @@ router.post('/data_input_eos', (req, res, next) => {
 });
 
 router.post('/data_output_eos', (req, res, next) => {
-    eos.getTableRows(({json:true, scope: "scm", code: "scm", table: "user"})).then(res => {
+    eos.getTableRows(({json:true, scope: "sc", code: "sc", table: "user"})).then(res => {
         return res.json(res);
         // console.log(myaccount.fc.structs.user);
     });
