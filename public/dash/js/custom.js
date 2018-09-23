@@ -37,7 +37,7 @@ $("#submit").click(function(){
 	$('#submit').prop('disabled', true);
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:3000/api/cms/data_input_eos",
+		url: "http://18.130.255.217:3000/api/cms/data_input_eos",
 		// The key needs to match your method's input parameter (case-sensitive).
 		data: { 
 			"username": username,
