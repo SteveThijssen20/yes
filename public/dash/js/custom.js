@@ -21,7 +21,7 @@ $("#submit").click(function(){
 	$('#submit').prop('disabled', true);
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:3000/api/cms/data_input",
+		url: "http://18.130.255.217:3000/api/cms/data_input",
 		// The key needs to match your method's input parameter (case-sensitive).
 		data: { 
 			"username": username,
@@ -50,7 +50,7 @@ $("#data_output").click(function(){
 
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:3000/api/cms/data_output",
+		url: "http://18.130.255.217:3000/api/cms/data_output",
 		// The key needs to match your method's input parameter (case-sensitive).
 		dataType: "JSON",
 		success: function(data){
