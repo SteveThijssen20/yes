@@ -54,11 +54,24 @@ const eos = Eos(config);
 //     eos.getInfo({}).then(result => res.json(result));
 // });
 
-router.post('/start', (req, res, next) => {
-    eos.contract('sc.code', true).then(myaccount => {
-        // const options = { authorization: [ `test.code@active` ] };
-        // myaccount.hi({"user": "abc"}, options).then(result => res.json(result));
-        console.log(myaccount);
+router.post('/data_input_eos', (req, res, next) => {
+    const username = req.body.username;
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
+    const email = req.body.email;
+    const gender = req.body.gender;
+    const phone = req.body.phone;
+    eos.contract('scm').then(myaccount => {
+        const options = { authorization: [ `scm` ] };
+        myaccount.create({username, firstname, lastname, email, gender, phone}, options).then(result => res.json(result));
+        // console.log(myaccount);
+        // console.log(myaccount.fc.structs.user);
+    });
+});
+
+router.post('/data_output_eos', (req, res, next) => {
+    eos.getTableRows(({json:true, scope: "scm", code: "scm", table: "user"})).then(res => {
+        return res.json(res);
         // console.log(myaccount.fc.structs.user);
     });
 });
@@ -105,125 +118,5 @@ router.post('/data_output', (req, res, next) => {
         return res.json(result);
     });
 });
-
-// router.post('/get_price', (req, res, next) => {
-//     // axios.get(option_etherscan_api + '/api?module=stats&action=ethprice&apikey=' + option_etherscan_api_key)
-//     //     .then(function (response) {
-//     //         return res.json({price: response.data.result.ethusd});
-//     //     })
-//     //     .catch(function (error) {
-//     //         return res.json({success: false, msg: 'error'});
-//     //     });
-//     const coinmarketcap = new CoinMarketCap();
-//     coinmarketcap.get("ethereum", coin => {
-//         return res.json({price: coin.price_usd});
-//     });
-// });
-
-// router.post('/get_tx_history', (req, res, next) => {
-//     const addr = req.body.addr;
-//     axios.get(option_etherscan_api + '/api?module=account&action=txlist&address=' + addr + '&startblock=0&endblock=99999999&sort=desc&apikey=' + option_etherscan_api_key)
-//         .then(function (response) {
-//             const obj = response.data.result;
-//             for (let i = obj.length - 1; i > -1; i--){
-//                 if (obj[i].input.length == 138 && (obj[i].from == erc20contract_address || obj[i].to == erc20contract_address)){
-//                     const hex_value = obj[i].input.substr(obj[i].input.length - 40);
-//                     obj[i].input = parseInt(hex_value, 16) /1000000;
-//                 }
-//                 else {
-//                     obj.splice(i, 1);
-//                 }
-//             }
-//             return res.json(obj);
-//         })
-//         .catch(function (error) {
-//             return res.json({success: false, msg: 'Bad Address'});
-//         });
-// });
-
-// router.post('/send_tx', (req, res, next) => {
-//     const addr = req.body.addr;
-//     const keystroage = req.body.keystroage;
-//     const password = req.body.password;
-//     const to = req.body.to;
-//     const value = req.body.value * 1000000;
-//     axios.get(option_etherscan_api + '/api?module=proxy&action=eth_gasPrice&apikey=' + option_etherscan_api_key)
-//         .then(function (response) {
-//             const gasPrice = response.data.result;
-//             const ks = lightwallet.keystore.deserialize(keystroage);
-//             axios.post(option_etherscan_api + '/api?module=proxy&action=eth_getTransactionCount&address=' + addr + '&tag=latest&apikey=' + option_etherscan_api_key)
-//                 .then(function (res_nonce) {
-//                     let options = {};
-//                     options.nonce = res_nonce.data.result;
-//                     options.to = erc20contract_address;
-//                     options.gasPrice = gasPrice;
-//                     options.gasLimit = 0x33450; //web3.toHex('210000');
-//                     options.value = 0;
-//                     const registerTx = lightwallet.txutils.functionTx(ABI, "transfer", [to, value], options);
-//                     ks.keyFromPassword(password, function (err, pwDerivedKey) {
-//                         if (err) {
-//                             return res.send(err);
-//                         }
-//                         else {
-//                             const signedTx = lightwallet.signing.signTx(ks, pwDerivedKey, registerTx, addr);
-//                             axios.get(option_etherscan_api + '/api?module=proxy&action=eth_sendRawTransaction&hex=' + '0x' + signedTx + '&apikey=' + option_etherscan_api_key)
-//                                 .then(function (res_tx) {
-//                                     // return res.json(res_tx.data.result);
-//                                     const tx_hash = res_tx.data.result;
-//                                     if (res_tx.data.error){
-//                                         if (res_tx.data.error.message.indexOf(0) > -1){
-//                                             return res.json({success: false, msg: 'The account you tried to send transaction from does not have enough funds. Required ETH gas. Please check your ethereum balance.'});
-//                                         }
-//                                         else {
-//                                             return res.json({success: false, msg: 'The previous transaction has not completed yet. Please wait and try again'});
-//                                         }
-//                                     }
-//                                     else{
-//                                         return res.json({success: true, msg: 'The request sent successfully', hash: tx_hash});
-//                                     }
-//                                     // const interval = setInterval(function() {
-//                                     //     axios.get(option_etherscan_api + '/api?module=transaction&action=gettxreceiptstatus&txhash=' + tx_hash + '&apikey=' + option_etherscan_api_key)
-//                                     //         .then(function (check_tx) {
-//                                     //             // return res.send(check_tx.data.result.status);
-//                                     //             if (check_tx.data.result.status == 1){
-//                                     //                 clearInterval(interval);
-//                                     //                 return res.json({success: true, hash: tx_hash, msg: 'Transaction success!'});
-//                                     //                 // return res.send(res_tx.data.result);
-//                                     //             }
-//                                     //         })
-//                                     //         .catch(function (error) {
-//                                     //             return res.json({success: false, msg: 'Transaction checking error!'});
-//                                     //         });
-//                                     // }, 10000);
-//                                 })
-//                                 .catch(function (error) {
-//                                     return res.json({success: false, msg: 'The account you tried to send transaction from does not have enough funds'});
-//                                 });
-//                         }
-//                     });
-//                     // return res.json(ks);
-//                 })
-//                 .catch(function (error) {
-//                     return res.json({success: false, msg: 'error!'});
-//                 });
-//         })
-//         .catch(function (error) {
-//             return res.json({success: false, msg: 'Could not get gas price!'});
-//         });
-// });
-//the price must be got from etherscan API. because coinmarketcap doesn't support the comsa API.
-// router.post('/get_price', (req, res, next) => {
-//     // axios.get(option_etherscan_api + '/api?module=stats&action=ethprice&apikey=' + option_etherscan_api_key)
-//     //     .then(function (response) {
-//     //         return res.json({price: response.data.result.ethusd});
-//     //     })
-//     //     .catch(function (error) {
-//     //         return res.json({success: false, msg: 'error'});
-//     //     });
-//     const coinmarketcap = new CoinMarketCap();
-//     coinmarketcap.get("cms", coin => {
-//         return res.json({price: coin.price_usd});
-//     });
-// });
 
 module.exports = router;
