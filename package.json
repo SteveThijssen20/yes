@@ -1,0 +1,38 @@
+{
+  "name": "meanauthapp",
+  "version": "1.0.1",
+  "description": "MEAN stack authentication app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app"
+  },
+  "dependencies": {
+    "@tronscan/client": "^0.2.4",
+    "axios": "^0.18.0",
+    "bcryptjs": "*",
+    "bluebird": "*",
+    "body-parser": "^1.18.3",
+    "cardano-api": "0.0.7",
+    "cardano-explorer-api": "0.0.2",
+    "cors": "*",
+    "eosjs": "^16.0.8",
+    "eth-lightwallet": "^3.0.1",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.1.6",
+    "mysql": "github:mysqljs/mysql",
+    "nem-api": "^1.4.5",
+    "nem-sdk": "^1.6.6",
+    "node-coinmarketcap": "^0.2.0",
+    "node-fetch": "^2.1.2",
+    "passport": "*",
+    "passport-jwt": "^4.0.0",
+    "pug": "^2.0.3",
+    "ripple-lib": "^0.21.0",
+    "urlencode": "^1.1.0",
+    "web3": "^0.20.6"
+  },
+  "author": "Brad Traversy",
+  "license": "ISC"
+}
